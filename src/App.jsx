@@ -244,7 +244,9 @@ export default function SockRiot() {
           <div style={{ display: "flex", gap: "28px", flexWrap: "wrap" }}>
             <div style={{ flex: "0 0 170px", display: "flex", alignItems: "center", justifyContent: "center", background: quickView.bg, borderRadius: "16px", padding: "28px" }}>
               <div style={{ animation: "float 4s ease-in-out infinite" }}>
-                <SockSVG color={quickView.accent} size={120} />
+                {quickView.imageUrl
+                  ? <img src={quickView.imageUrl} alt={quickView.name} style={{ width: 120, height: 120, objectFit: 'contain' }} />
+                  : <SockSVG color={quickView.accent} size={120} />}
               </div>
             </div>
             <div style={{ flex: 1, minWidth: "200px" }}>
@@ -387,7 +389,11 @@ export default function SockRiot() {
                     {p.tag === "BESTSELLER" ? "🔥 BESTSELLER" : p.tag === "NEW" ? "✨ NEW" : `⭐ ${p.tag}`}
                   </div>
                 )}
-                <div className="sr-sock"><SockSVG color={p.accent} size={90} /></div>
+                <div className="sr-sock">
+                {p.imageUrl
+                  ? <img src={p.imageUrl} alt={p.name} style={{ width: 90, height: 90, objectFit: 'contain' }} />
+                  : <SockSVG color={p.accent} size={90} />}
+              </div>
               </div>
               <div style={{ padding: "14px 18px 18px" }}>
                 <div style={{ fontFamily: "'DM Mono',monospace", fontSize: "9px", color: "#B0A090", letterSpacing: "1px", marginBottom: "4px" }}>{p.cat.toUpperCase()}</div>

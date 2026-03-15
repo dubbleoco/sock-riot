@@ -47,6 +47,7 @@ export async function fetchProducts() {
           edges { node {
             id title tags
             priceRange { minVariantPrice { amount } }
+            images(first: 1) { edges { node { url } } }
             variants(first: 1) { edges { node { id } } }
           }}
         }
@@ -76,7 +77,8 @@ export async function fetchProducts() {
         let tag = null;
         if (tags.includes('bestseller')) tag = 'BESTSELLER';
         else if (tags.includes('new')) tag = 'NEW';
-        return { id: p.id, variantId, name, cat, price, tag, accent, bg, humor, desc: '' };
+        const imageUrl = p.images?.edges?.[0]?.node?.url || null;
+        return { id: p.id, variantId, name, cat, price, tag, accent, bg, humor, desc: '', imageUrl };
       });
   } catch (e) {
     console.warn('Shopify fetch failed, using fallback:', e);
