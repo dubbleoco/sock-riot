@@ -1,5 +1,5 @@
 // Shopify Storefront API — public (no token needed, store is public)
-const SHOP_DOMAIN = 'qwm0fd-fg.myshopify.com';
+const SHOP_DOMAIN = 'sockriot.com';
 const API_VERSION = '2026-01';
 const ENDPOINT = `https://${SHOP_DOMAIN}/api/${API_VERSION}/graphql.json`;
 
