@@ -1,3 +1,4 @@
+import { fetchProducts, createCheckout } from "./shopify.js";
 import { useState, useEffect, useRef } from "react";
 
 const PRODUCTS = [
@@ -63,6 +64,19 @@ export default function SockRiot() {
   const [flashId, setFlashId] = useState(null);
   const [email, setEmail] = useState("");
   const [joined, setJoined] = useState(false);
+  const [liveProducts, setLiveProducts] = useState(null);
+
+  // Load live Shopify products on mount, fall back to hardcoded
+  useEffect(() => {
+    fetchProducts().then(products => {
+      if (products && products.length > 0) {
+        setLiveProducts(products);
+      }
+    }).catch(() => {}); // silently fall back to hardcoded
+  }, []);
+
+  const allProducts = liveProducts || PRODUCTS;
+
 
   const addToCart = (p) => {
     setCart(prev => {
@@ -78,11 +92,11 @@ export default function SockRiot() {
   const cartTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const freeShip = cartTotal >= 35;
 
-  const filtered = filter === "ALL" ? PRODUCTS
-    : filter === "SWEARY" ? PRODUCTS.filter(p => p.humor === "sweary")
-    : filter === "NEW" ? PRODUCTS.filter(p => p.tag === "NEW")
-    : filter === "BEST" ? PRODUCTS.filter(p => p.tag === "BESTSELLER")
-    : PRODUCTS.filter(p => p.price < 15);
+  const filtered = filter === "ALL" ? allProducts
+    : filter === "SWEARY" ? allProducts.filter(p => p.humor === "sweary")
+    : filter === "NEW" ? allProducts.filter(p => p.tag === "NEW")
+    : filter === "BEST" ? allProducts.filter(p => p.tag === "BESTSELLER")
+    : allProducts.filter(p => p.price < 15);
 
   const cream = "#FBF7F0";
   const dark = "#2C2420";
@@ -209,7 +223,11 @@ export default function SockRiot() {
                   <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "13px", color: "#A09080" }}>Total</span>
                   <span style={{ fontFamily: "'Lilita One',cursive", fontSize: "22px", color: red }}>${cartTotal.toFixed(2)}</span>
                 </div>
-                <button className="sr-btn" style={{ width: "100%", padding: "16px", background: red, color: "#fff", fontSize: "13px" }}>
+                <button className="sr-btn" onClick={async () => {
+                    const url = await createCheckout(cart);
+                    if (url) window.location.href = url;
+                    else alert("Checkout unavailable — store is not yet live.");
+                  }} style={{ width: "100%", padding: "16px", background: red, color: "#fff", fontSize: "13px" }}>
                   Checkout — ${cartTotal.toFixed(2)}
                 </button>
               </div>
